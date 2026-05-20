@@ -49,17 +49,23 @@ window.closeDrawers = function() {
     document.getElementById(id).classList.remove('open'));
 };
 function applyMobileUI() {
-  const m = window.innerWidth <= 640;
-  const b = document.getElementById('btn-info-mobile');
-  if (b) b.style.display = m ? 'flex' : 'none';
+  const isMobile = window.innerWidth <= 700;
+  const menuBtn = document.getElementById('btn-menu');
+  const infoBtn = document.getElementById('btn-info-mobile');
+  if (menuBtn) menuBtn.style.display = isMobile ? 'flex' : 'none';
+  if (infoBtn) infoBtn.style.display = isMobile ? 'flex' : 'none';
 }
 window.addEventListener('resize', applyMobileUI);
 applyMobileUI();
 
 // ── CANVAS SIZING ─────────────────────────────────────────────────────────────
 function resizeCanvas() {
-  const area = document.getElementById('canvas-area');
-  const size = Math.max(260, Math.min(area.clientWidth - 20, area.clientHeight - 64, 640));
+  const area   = document.getElementById('canvas-area');
+  const isMob  = window.innerWidth <= 700;
+  const avail  = isMob
+    ? Math.min(area.clientWidth - 12, area.clientHeight - 56)
+    : Math.min(area.clientWidth - 20, area.clientHeight - 64, 640);
+  const size   = Math.max(240, avail);
   canvas.width = canvas.height = size;
   pCanvas.width = pCanvas.height = size;
   pCanvas.style.width = pCanvas.style.height = size + 'px';

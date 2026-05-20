@@ -66,9 +66,8 @@
         <span id="status-text">INACTIVO</span>
       </div>
       <button class="btn-icon" id="btn-music" title="Música">♪</button>
-      <!-- Mobile: open left panel (controls) -->
-      <button class="btn-icon" id="btn-menu" title="Controles" onclick="toggleDrawer('left')" style="font-size:13px">☰</button>
-      <!-- Mobile: open right panel (info) -->
+      <!-- Siempre en el DOM, CSS los muestra/oculta según breakpoint -->
+      <button class="btn-icon" id="btn-menu" title="Controles" onclick="toggleDrawer('left')" style="font-size:13px;display:none">☰</button>
       <button class="btn-icon" id="btn-info-mobile" title="Info" onclick="toggleDrawer('right')" style="font-size:13px;display:none">◧</button>
     </div>
   </header>

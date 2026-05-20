@@ -429,60 +429,106 @@ input[type=range] { width:100%; accent-color:var(--neon); cursor:pointer; height
    TABLET  ≤ 900px
    ════════════════════════════════ */
 @media (max-width:900px) {
-  :root { --left-w:180px; --right-w:200px; }
+  :root { --left-w:170px; --right-w:190px; }
   .logo-sub { display:none; }
-  .hud-stats { gap:8px; }
-  .stat-pill { min-width:52px; padding:2px 7px; }
-  .energy-track { width:70px; }
+  .hud-stats { gap:6px; }
+  .stat-pill { min-width:50px; padding:2px 6px; }
+  .energy-track { width:65px; }
   .status-badge span { display:none; }
 }
 
 /* ════════════════════════════════
-   MOBILE  ≤ 640px
+   MOBILE  ≤ 700px  (cubre todos los iPhones)
    ════════════════════════════════ */
-@media (max-width:640px) {
-  :root { --top-h:52px; --bot-h:36px; }
+@media (max-width:700px) {
+  :root { --top-h:52px; --bot-h:34px; }
 
-  /* Hide side panels, show only canvas */
-  #panel-left, #panel-right { display:none; }
-  #main-layout { grid-template-columns:1fr; }
+  /* Layout: solo canvas, sin columnas laterales */
+  #main-layout {
+    display:flex !important;
+    flex-direction:column !important;
+    grid-template-columns:unset !important;
+  }
 
-  /* Bottom bar: simplified */
-  .metrics-row { gap:10px; }
+  /* Oculta paneles por defecto */
+  #panel-left  { display:none !important; }
+  #panel-right { display:none !important; }
+
+  /* Canvas ocupa todo */
+  #canvas-area {
+    flex:1;
+    width:100%;
+    padding:6px;
+  }
+
+  /* Canvas wrapper ocupa el máximo */
+  #canvas-wrapper {
+    width:100%;
+    max-width:100%;
+  }
+
+  /* Bottom bar simplificado */
+  .metrics-row { gap:8px; }
   .metric-sep  { display:none; }
   .util-bar    { display:none; }
 
-  /* Show menu button */
-  #btn-menu { display:flex; }
+  /* Botones móvil en header */
+  #btn-menu         { display:flex !important; }
+  #btn-info-mobile  { display:flex !important; }
 
-  /* Corner brackets off */
+  /* Esquinas decorativas ocultas */
   .corner { display:none; }
 
-  /* HUD stats — fewer pills */
-  .hud-stats { gap:6px; }
-  .stat-pill.hide-mobile { display:none; }
+  /* HUD: menos pills */
+  .hud-stats { gap:5px; }
+  .stat-pill.hide-mobile { display:none !important; }
 
-  /* Panels become slide-in drawers */
+  /* Logo compacto */
+  .logo-main { font-size:16px; letter-spacing:2px; }
+  .logo-sub  { display:none; }
+
+  /* Stats más pequeños */
+  .stat-val  { font-size:14px; }
+  .energy-track { width:60px; }
+
+  /* Paneles como drawers deslizables */
   #panel-left, #panel-right {
     display:flex !important;
-    position:fixed; top:0; bottom:0; width:min(300px,85vw);
-    z-index:300; transition:transform .3s ease;
-    padding-top:calc(var(--top-h) + 8px);
+    position:fixed !important;
+    top:0; bottom:0;
+    width:min(290px, 88vw);
+    z-index:500;
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    padding-top:calc(var(--top-h) + 6px);
+    overflow-y:auto;
   }
-  #panel-left  { left:0; transform:translateX(-105%); border-right:1px solid var(--border); }
-  #panel-right { right:0; transform:translateX(105%); border-left:1px solid var(--border); }
-  #panel-left.open  { transform:translateX(0); }
-  #panel-right.open { transform:translateX(0); }
+  #panel-left {
+    left:0;
+    transform:translateX(-110%);
+    border-right:1px solid var(--border);
+    border-left:none;
+  }
+  #panel-right {
+    right:0;
+    transform:translateX(110%);
+    border-left:1px solid var(--border);
+    border-right:none;
+  }
+  #panel-left.open  { transform:translateX(0) !important; }
+  #panel-right.open { transform:translateX(0) !important; }
 
-  /* Overlay */
-  #btn-controls { font-size:9px; letter-spacing:1px; }
-  #btn-info     { font-size:9px; letter-spacing:1px; }
+  /* Legend más compacta */
+  #legend { gap:7px; font-size:8px; }
+  .leg-dot { width:8px; height:8px; }
 }
 
 /* ════════════════════════════════
-   VERY SMALL  ≤ 380px
+   MUY PEQUEÑO  ≤ 380px
    ════════════════════════════════ */
 @media (max-width:380px) {
-  .logo-main { font-size:14px; letter-spacing:2px; }
+  .logo-main { font-size:14px; letter-spacing:1px; }
   .stat-val  { font-size:13px; }
+  .stat-pill { min-width:44px; padding:2px 5px; }
+  .hud-right { gap:5px; }
+  .btn-icon  { width:28px; height:28px; font-size:13px; }
 }
