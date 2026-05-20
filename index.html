@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <title>RESCUE AI — Agente Inteligente</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div><div class="corner corner-br"></div>
+
+<!-- ═══ SPLASH SCREEN ═══ -->
+<div id="splash">
+  <div class="splash-logo">⬡ RESCUE AI</div>
+  <div class="splash-sub">Sistema de Agente Inteligente Autónomo v4.0</div>
+  <div class="splash-bar-wrap"><div class="splash-bar"></div></div>
+  <div class="splash-status" id="splash-status">Inicializando módulos IA...</div>
+  <button class="splash-btn" id="splash-btn" style="display:none" onclick="hideSplash()">▶ INICIAR MISIÓN</button>
+</div>
+
+<!-- ═══ DRAWER OVERLAY (mobile) ═══ -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawers()"></div>
+
+<div id="app">
+
+  <!-- TOP HUD -->
+  <header id="hud-top">
+    <div class="logo-block">
+      <span class="logo-main">⬡ RESCUE AI</span>
+      <span class="logo-sub">Agente Inteligente v4.0</span>
+    </div>
+
+    <div class="hud-stats">
+      <div class="stat-pill energy-wrap">
+        <span class="stat-label">Energía</span>
+        <div class="energy-track"><div id="energy-fill" style="width:100%"></div></div>
+        <span id="energy-val" class="stat-val" style="font-size:12px">100</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-label">Rescatados</span>
+        <span id="rescued-val" class="stat-val green">0/0</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-label">Pasos</span>
+        <span id="steps-val" class="stat-val">0</span>
+      </div>
+      <div class="stat-pill hide-mobile">
+        <span class="stat-label">Algoritmo</span>
+        <span id="algo-val" class="stat-val yellow">A*</span>
+      </div>
+      <div class="stat-pill hide-mobile">
+        <span class="stat-label">Utilidad</span>
+        <span id="utility-top" class="stat-val green">—</span>
+      </div>
+    </div>
+
+    <div class="hud-right">
+      <div class="status-badge">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">INACTIVO</span>
+      </div>
+      <button class="btn-icon" id="btn-music" title="Música">♪</button>
+      <!-- Mobile: open left panel (controls) -->
+      <button class="btn-icon" id="btn-menu" title="Controles" onclick="toggleDrawer('left')" style="font-size:13px">☰</button>
+      <!-- Mobile: open right panel (info) -->
+      <button class="btn-icon" id="btn-info-mobile" title="Info" onclick="toggleDrawer('right')" style="font-size:13px;display:none">◧</button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main id="main-layout">
+
+    <!-- LEFT PANEL -->
+    <aside id="panel-left" class="side-panel">
+      <div class="panel-section">
+        <div class="panel-header">⚙ Configuración</div>
+        <div class="ctrl-group">
+          <label class="ctrl-label">Mapa <span id="lbl-size">12×12</span></label>
+          <select id="map-size">
+            <option value="8">8×8 — Fácil</option>
+            <option value="12" selected>12×12 — Normal</option>
+            <option value="16">16×16 — Difícil</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label">Algoritmo</label>
+          <select id="algo-select">
+            <option value="astar">A* (Informado)</option>
+            <option value="bfs">BFS (No Informado)</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label">Velocidad <span id="lbl-speed">Normal</span></label>
+          <input type="range" id="speed-slider" min="50" max="750" value="300"/>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label">Víctimas <span id="lbl-victims">4</span></label>
+          <input type="range" id="victims-count" min="2" max="8" value="4"/>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label">Obstáculos <span id="lbl-obs">15%</span></label>
+          <input type="range" id="obstacle-density" min="5" max="35" value="15"/>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-header">▶ Control</div>
+        <div class="btn-grid">
+          <button id="btn-generate" class="btn btn-primary btn-full">⬡ Generar</button>
+          <button id="btn-start"    class="btn btn-success" disabled>▶ Iniciar</button>
+          <button id="btn-pause"    class="btn btn-warn"    disabled>⏸ Pausa</button>
+          <button id="btn-reset"    class="btn btn-danger">↺ Reset</button>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-header">📊 Benchmark</div>
+        <button id="btn-compare" class="btn btn-compare btn-full">⚡ BFS vs A*</button>
+        <div id="compare-results"></div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-header">🏆 Records</div>
+        <div id="highscores"></div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-header">📈 Utilidad</div>
+        <canvas id="util-chart" height="48"></canvas>
+      </div>
+    </aside>
+
+    <!-- CANVAS -->
+    <section id="canvas-area">
+      <div id="canvas-wrapper">
+        <canvas id="game-canvas"></canvas>
+        <canvas id="particle-canvas"></canvas>
+        <div id="overlay" class="hidden">
+          <div class="overlay-card">
+            <div class="overlay-icon" id="ov-icon">🎖</div>
+            <div class="overlay-title" id="ov-title">MISIÓN COMPLETADA</div>
+            <div class="overlay-stats" id="ov-stats"></div>
+            <button class="btn btn-primary" style="width:100%" onclick="document.getElementById('overlay').classList.add('hidden')">↺ CONTINUAR</button>
+          </div>
+        </div>
+      </div>
+      <div id="legend">
+        <div class="leg-item"><div class="leg-dot agent"></div>Agente</div>
+        <div class="leg-item"><div class="leg-dot victim"></div>Víctima</div>
+        <div class="leg-item"><div class="leg-dot obs"></div>Obstáculo</div>
+        <div class="leg-item"><div class="leg-dot danger"></div>Peligro</div>
+        <div class="leg-item"><div class="leg-dot charge"></div>Recarga</div>
+        <div class="leg-item"><div class="leg-dot fog"></div>Niebla</div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL -->
+    <aside id="panel-right" class="side-panel">
+      <div class="tabs-bar">
+        <button class="tab-btn active" data-tab="log">LOG</button>
+        <button class="tab-btn" data-tab="kb">KB</button>
+        <button class="tab-btn" data-tab="plan">PLAN</button>
+        <button class="tab-btn" data-tab="learn">Q-MAP</button>
+      </div>
+      <div id="tab-log"   class="tab-pane active"><div class="log-list" id="log-list"></div></div>
+      <div id="tab-kb"    class="tab-pane"><div id="kb-content"><p class="muted-msg">Genera un mapa.</p></div></div>
+      <div id="tab-plan"  class="tab-pane"><div id="plan-content"><p class="muted-msg">El plan STRIPS aparecerá aquí.</p></div></div>
+      <div id="tab-learn" class="tab-pane">
+        <canvas id="qval-canvas" height="200"></canvas>
+        <div class="q-info" id="q-info"><p class="muted-msg">Inicia el agente.</p></div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- BOTTOM HUD -->
+  <footer id="hud-bottom">
+    <div class="metrics-row">
+      <div class="metric">BFS<strong id="m-bfs-n">—</strong></div>
+      <div class="metric-sep"></div>
+      <div class="metric">A*<strong id="m-astar-n">—</strong></div>
+      <div class="metric-sep"></div>
+      <div class="metric">Q-ep<strong id="m-qep">0</strong></div>
+      <div class="metric-sep"></div>
+      <div class="metric">Daños<strong id="m-dmg">0</strong></div>
+    </div>
+    <div class="util-bar">
+      UTIL <div class="util-track"><div id="util-fill" style="width:0%"></div></div>
+      <strong id="m-util" style="color:var(--neon);font-family:'Exo 2',sans-serif">—</strong>
+    </div>
+  </footer>
+
+</div>
+
+<script src="js/environment.js"></script>
+<script src="js/search.js"></script>
+<script src="js/knowledge.js"></script>
+<script src="js/uncertainty.js"></script>
+<script src="js/planner.js"></script>
+<script src="js/decision.js"></script>
+<script src="js/learning.js"></script>
+<script src="js/agent.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/particles.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
